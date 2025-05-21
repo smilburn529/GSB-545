@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>GSB 545: Advanced Machine Learning for Business Analytics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="Lab-5_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Lab-5_files/libs/quarto-html/quarto.js"></script>
+<script src="Lab-5_files/libs/quarto-html/popper.min.js"></script>
+<script src="Lab-5_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Lab-5_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Lab-5_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Lab-5_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Lab-5_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Lab-5_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Lab-5_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">GSB 545: Advanced Machine Learning for Business Analytics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="predicting-daily-bitcoin-stock" class="level2">
+<h2 class="anchored" data-anchor-id="predicting-daily-bitcoin-stock">Predicting Daily Bitcoin Stock</h2>
+<p>In this lab we’ll be using a dataset from kaggle yet again…it’s just so fun and rich! We’re using data prepared using the Alpha Vantage API and posted on kaggle.</p>
+<section id="dataset" class="level3">
+<h3 class="anchored" data-anchor-id="dataset">DATASET:</h3>
+<ul>
+<li>https://www.kaggle.com/datasets/ahmedadam415/digital-currency-time-series</li>
+</ul>
+</section>
+<section id="primary-goals" class="level3">
+<h3 class="anchored" data-anchor-id="primary-goals">Primary Goals:</h3>
+<ul>
+<li>Predict daily bitcoin stock</li>
+</ul>
+</section>
+<section id="assignment-specs" class="level3">
+<h3 class="anchored" data-anchor-id="assignment-specs">Assignment Specs:</h3>
+<p>You need to explore multiple recurrent neural network models to solve this problem.</p>
+<p>The dataset includes multiple time series. You may choose which one you want to model.</p>
+<p>Your submission should be built and written with non-experts as the target audience. All of your code should still be included, but do your best to narrate your work in accessible ways.</p>
+<p>Again, submit an HTML, ipynb, or Colab link. Be sure to rerun your entire notebook fresh before submitting</p>
+<div id="cell-2" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> keras.models <span class="im">import</span> Sequential</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> keras.layers <span class="im">import</span> Dense, SimpleRNN, LSTM</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> preprocessing</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, geom_point, geom_smooth, aes, stat_smooth, geom_line, xlim, ylim</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="loading-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-the-data">Loading the Data</h2>
+<div id="cell-4" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_dataset_vars(dataset, look_back<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    dataX, dataY <span class="op">=</span> [], []</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(dataset)<span class="op">-</span>look_back<span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      a <span class="op">=</span> dataset[i:(i<span class="op">+</span>look_back), :]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      dataX.append(a)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      dataY.append(dataset[i <span class="op">+</span> look_back, <span class="dv">0</span>])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(dataX), np.array(dataY)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'dc.csv'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Unnamed: 0</th>
+<th data-quarto-table-cell-role="th">open_SAR</th>
+<th data-quarto-table-cell-role="th">open_USD</th>
+<th data-quarto-table-cell-role="th">high_SAR</th>
+<th data-quarto-table-cell-role="th">high_USD</th>
+<th data-quarto-table-cell-role="th">low_SAR</th>
+<th data-quarto-table-cell-role="th">low_USD</th>
+<th data-quarto-table-cell-role="th">close_SAR</th>
+<th data-quarto-table-cell-role="th">close_USD</th>
+<th data-quarto-table-cell-role="th">volume</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2021-01-30</td>
+<td>128437.248512</td>
+<td>34246.28</td>
+<td>131012.723200</td>
+<td>34933.00</td>
+<td>123106.880000</td>
+<td>32825.00</td>
+<td>128333.212416</td>
+<td>34218.54</td>
+<td>43072</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2021-01-29</td>
+<td>125144.022272</td>
+<td>33368.18</td>
+<td>144510.037760</td>
+<td>38531.90</td>
+<td>119695.516160</td>
+<td>31915.40</td>
+<td>128459.450880</td>
+<td>34252.20</td>
+<td>231827</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>2021-01-28</td>
+<td>113870.357376</td>
+<td>30362.19</td>
+<td>126703.438592</td>
+<td>33783.98</td>
+<td>111919.811840</td>
+<td>29842.10</td>
+<td>125131.570944</td>
+<td>33364.86</td>
+<td>92621</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>2021-01-27</td>
+<td>121753.023104</td>
+<td>32464.01</td>
+<td>122102.860416</td>
+<td>32557.29</td>
+<td>109668.146688</td>
+<td>29241.72</td>
+<td>113885.208960</td>
+<td>30366.15</td>
+<td>95911</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>2021-01-26</td>
+<td>120966.114176</td>
+<td>32254.19</td>
+<td>123470.218752</td>
+<td>32921.88</td>
+<td>115652.472448</td>
+<td>30837.37</td>
+<td>121767.124608</td>
+<td>32467.77</td>
+<td>84972</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-6" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data2 <span class="op">=</span> data[[<span class="st">"volume"</span>]].iloc[::<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data2.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">volume</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">999</td>
+<td>33787</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">998</td>
+<td>25533</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">997</td>
+<td>25673</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">996</td>
+<td>25055</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">995</td>
+<td>48227</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="modeling" class="level2">
+<h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
+<section id="model-1-8020-split-and-look-back-2-lstm4" class="level3">
+<h3 class="anchored" data-anchor-id="model-1-8020-split-and-look-back-2-lstm4">Model 1: 80/20 Split and Look Back = 2, LSTM(4)</h3>
+<div id="cell-9" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># normalize the dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> MinMaxScaler(feature_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>data2 <span class="op">=</span> scaler.fit_transform(data2)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>train_size <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(data2) <span class="op">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>test_size <span class="op">=</span> <span class="bu">len</span>(data2) <span class="op">-</span> train_size</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> data2[<span class="dv">0</span>:train_size], data2[train_size:<span class="bu">len</span>(data2)]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(train), <span class="bu">len</span>(test))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>800 200
+800 200</code></pre>
+</div>
+</div>
+<div id="cell-10" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(ggplot(data, aes(<span class="bu">range</span>(<span class="bu">len</span>(data)), <span class="st">"volume"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_point()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot displays the original volume values, which range widely and peak above 400,000. The large spikes dominate the chart, making it difficult to observe patterns in the lower-volume regions. But it seems that volume has gone down over time.</p>
+<div id="cell-12" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data3 <span class="op">=</span> pd.DataFrame(data2)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data3.columns <span class="op">=</span> [<span class="st">"volume"</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>(ggplot(data3, aes(<span class="bu">range</span>(<span class="bu">len</span>(data3)), <span class="st">"volume"</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_point()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot shows the volume data after scaling, compressing all values into a consistent range between -1 and 1. This allows for clearer visualization of smaller fluctuations and overall trends across the entire dataset.</p>
+<div id="cell-14" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reshape into X=t and Y=t+1</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>look_back <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>trainX, trainY <span class="op">=</span> create_dataset_vars(train, look_back)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>testX, testY <span class="op">=</span> create_dataset_vars(test, look_back)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>trainX <span class="op">=</span> np.reshape(trainX, (trainX.shape[<span class="dv">0</span>], <span class="dv">1</span>, trainX.shape[<span class="dv">1</span>]))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>testX <span class="op">=</span> np.reshape(testX, (testX.shape[<span class="dv">0</span>], <span class="dv">1</span>, testX.shape[<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-15" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create and fit the LSTM network</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Sequential()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>model.add(LSTM(<span class="dv">4</span>, input_shape<span class="op">=</span>(<span class="dv">1</span>, look_back)))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>model.add(Dense(<span class="dv">1</span>))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'mean_squared_error'</span>, optimizer<span class="op">=</span><span class="st">'adam'</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>model.fit(trainX, trainY, epochs<span class="op">=</span><span class="dv">10</span>, batch_size<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.12/site-packages/keras/src/layers/rnn/rnn.py:200: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/10
+Epoch 1/10
+797/797 - 2s - 2ms/step - loss: 0.0058
+797/797 - 2s - 2ms/step - loss: 0.0058
+Epoch 2/10
+Epoch 2/10
+797/797 - 1s - 655us/step - loss: 0.0044
+797/797 - 1s - 655us/step - loss: 0.0044
+Epoch 3/10
+Epoch 3/10
+797/797 - 1s - 656us/step - loss: 0.0039
+797/797 - 1s - 656us/step - loss: 0.0039
+Epoch 4/10
+Epoch 4/10
+797/797 - 1s - 647us/step - loss: 0.0037
+797/797 - 1s - 647us/step - loss: 0.0037
+Epoch 5/10
+Epoch 5/10
+797/797 - 1s - 721us/step - loss: 0.0037
+797/797 - 1s - 721us/step - loss: 0.0037
+Epoch 6/10
+Epoch 6/10
+797/797 - 1s - 838us/step - loss: 0.0037
+797/797 - 1s - 838us/step - loss: 0.0037
+Epoch 7/10
+Epoch 7/10
+797/797 - 1s - 702us/step - loss: 0.0036
+797/797 - 1s - 702us/step - loss: 0.0036
+Epoch 8/10
+Epoch 8/10
+797/797 - 1s - 702us/step - loss: 0.0036
+797/797 - 1s - 702us/step - loss: 0.0036
+Epoch 9/10
+Epoch 9/10
+797/797 - 1s - 694us/step - loss: 0.0036
+797/797 - 1s - 694us/step - loss: 0.0036
+Epoch 10/10
+Epoch 10/10
+797/797 - 1s - 672us/step - loss: 0.0036
+797/797 - 1s - 672us/step - loss: 0.0036</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;keras.src.callbacks.history.History at 0x301ec9be0&gt;</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> model.predict(trainX)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> model.predict(testX)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># invert predictions</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> scaler.inverse_transform(trainPredict)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>trainY <span class="op">=</span> scaler.inverse_transform([trainY])</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> scaler.inverse_transform(testPredict)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>testY <span class="op">=</span> scaler.inverse_transform([testY])</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate root mean squared error</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>trainScore <span class="op">=</span> np.sqrt(mean_squared_error(trainY[<span class="dv">0</span>], trainPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Train Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (trainScore))</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>testScore <span class="op">=</span> np.sqrt(mean_squared_error(testY[<span class="dv">0</span>], testPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Test Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (testScore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 1/25 ━━━━━━━━━━━━━━━━━━━━ 3s 132ms/step 1/25 ━━━━━━━━━━━━━━━━━━━━ 3s 132ms/step25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step
+25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step
+1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+Train Score: 23709.14 RMSE
+Test Score: 29375.80 RMSE
+Train Score: 23709.14 RMSE
+Test Score: 29375.80 RMSE</code></pre>
+</div>
+</div>
+<div id="cell-17" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># shift train predictions for plotting</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>trainPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#trainPredictPlot[:, :] = np.nan</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[look_back:<span class="bu">len</span>(trainPredict)<span class="op">+</span>look_back, :] <span class="op">=</span> trainPredict</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># shift test predictions for plotting</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>testPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#testPredictPlot[:, :] = np.nan</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>testPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>testPredictPlot[<span class="bu">len</span>(trainPredict)<span class="op">+</span>(look_back<span class="op">*</span><span class="dv">2</span>)<span class="op">+</span><span class="dv">1</span>:<span class="bu">len</span>(data2)<span class="op">-</span><span class="dv">1</span>, :] <span class="op">=</span> testPredict</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot baseline and predictions</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>plt.plot(scaler.inverse_transform(data2))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>plt.plot(trainPredictPlot)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>plt.plot(testPredictPlot)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-18" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(scaler.inverse_transform(data2).flatten(), trainPredictPlot.flatten())</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(finalma, testPredictPlot.flatten())</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append([<span class="st">"Original"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot), [<span class="st">"Train"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append(finallabels, [<span class="st">"Test"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(<span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)), <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(finaltime, <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'timeindex'</span>: finaltime,</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'volume'</span>: finalma,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'label'</span>: finallabels}</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>(ggplot(results, aes(<span class="st">"finaltime"</span>, <span class="st">"volume"</span>, color <span class="op">=</span> <span class="st">"label"</span>))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="model-2-8020-split-and-look-back-3-lstm6" class="level3">
+<h3 class="anchored" data-anchor-id="model-2-8020-split-and-look-back-3-lstm6">Model 2: 80/20 Split and Look Back = 3, LSTM(6)</h3>
+<div id="cell-20" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change our look back from 2 to 3</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>look_back <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>trainX, trainY <span class="op">=</span> create_dataset_vars(train, look_back)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>testX, testY <span class="op">=</span> create_dataset_vars(test, look_back)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>trainX <span class="op">=</span> np.reshape(trainX, (trainX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>testX <span class="op">=</span> np.reshape(testX, (testX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the LSTM network</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Sequential()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>model.add(LSTM(<span class="dv">6</span>, input_shape<span class="op">=</span>(look_back, <span class="dv">1</span>)))  <span class="co"># Update the input_shape</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>model.add(Dense(<span class="dv">1</span>))</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'mean_squared_error'</span>, optimizer<span class="op">=</span><span class="st">'adam'</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>model.fit(trainX, trainY, epochs<span class="op">=</span><span class="dv">10</span>, batch_size<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/10
+Epoch 1/10</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.12/site-packages/keras/src/layers/rnn/rnn.py:200: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>796/796 - 2s - 2ms/step - loss: 0.0044
+796/796 - 2s - 2ms/step - loss: 0.0044
+Epoch 2/10
+Epoch 2/10
+796/796 - 1s - 795us/step - loss: 0.0039
+796/796 - 1s - 795us/step - loss: 0.0039
+Epoch 3/10
+Epoch 3/10
+796/796 - 1s - 826us/step - loss: 0.0038
+796/796 - 1s - 826us/step - loss: 0.0038
+Epoch 4/10
+Epoch 4/10
+796/796 - 1s - 815us/step - loss: 0.0038
+796/796 - 1s - 815us/step - loss: 0.0038
+Epoch 5/10
+Epoch 5/10
+796/796 - 1s - 889us/step - loss: 0.0038
+796/796 - 1s - 889us/step - loss: 0.0038
+Epoch 6/10
+Epoch 6/10
+796/796 - 1s - 1ms/step - loss: 0.0038
+796/796 - 1s - 1ms/step - loss: 0.0038
+Epoch 7/10
+Epoch 7/10
+796/796 - 1s - 855us/step - loss: 0.0037
+796/796 - 1s - 855us/step - loss: 0.0037
+Epoch 8/10
+Epoch 8/10
+796/796 - 1s - 857us/step - loss: 0.0037
+796/796 - 1s - 857us/step - loss: 0.0037
+Epoch 9/10
+Epoch 9/10
+796/796 - 1s - 870us/step - loss: 0.0037
+796/796 - 1s - 870us/step - loss: 0.0037
+Epoch 10/10
+Epoch 10/10
+796/796 - 1s - 994us/step - loss: 0.0036
+796/796 - 1s - 994us/step - loss: 0.0036</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;keras.src.callbacks.history.History at 0x301ed7e90&gt;</code></pre>
+</div>
+</div>
+<div id="cell-22" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> model.predict(trainX)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> model.predict(testX)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># invert predictions</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> scaler.inverse_transform(trainPredict)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>trainY <span class="op">=</span> scaler.inverse_transform([trainY])</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> scaler.inverse_transform(testPredict)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>testY <span class="op">=</span> scaler.inverse_transform([testY])</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate root mean squared error</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>trainScore <span class="op">=</span> np.sqrt(mean_squared_error(trainY[<span class="dv">0</span>], trainPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Train Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (trainScore))</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>testScore <span class="op">=</span> np.sqrt(mean_squared_error(testY[<span class="dv">0</span>], testPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Test Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (testScore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 1/25 ━━━━━━━━━━━━━━━━━━━━ 2s 122ms/step 1/25 ━━━━━━━━━━━━━━━━━━━━ 2s 122ms/step25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step
+25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step
+1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 13ms/step1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 13ms/step7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+Train Score: 23186.81 RMSE
+Test Score: 30441.44 RMSE
+Train Score: 23186.81 RMSE
+Test Score: 30441.44 RMSE</code></pre>
+</div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># shift train predictions for plotting</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>trainPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#trainPredictPlot[:, :] = np.nan</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[look_back:<span class="bu">len</span>(trainPredict)<span class="op">+</span>look_back, :] <span class="op">=</span> trainPredict</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># shift test predictions for plotting</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>testPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#testPredictPlot[:, :] = np.nan</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>testPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>testPredictPlot[<span class="bu">len</span>(trainPredict)<span class="op">+</span>(look_back<span class="op">*</span><span class="dv">2</span>)<span class="op">+</span><span class="dv">1</span>:<span class="bu">len</span>(data2)<span class="op">-</span><span class="dv">1</span>, :] <span class="op">=</span> testPredict</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot baseline and predictions</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>plt.plot(scaler.inverse_transform(data2))</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>plt.plot(trainPredictPlot)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>plt.plot(testPredictPlot)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(scaler.inverse_transform(data2).flatten(), trainPredictPlot.flatten())</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(finalma, testPredictPlot.flatten())</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append([<span class="st">"Original"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot), [<span class="st">"Train"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append(finallabels, [<span class="st">"Test"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(<span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)), <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(finaltime, <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'timeindex'</span>: finaltime,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'volume'</span>: finalma,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'label'</span>: finallabels}</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>(ggplot(results, aes(<span class="st">"finaltime"</span>, <span class="st">"volume"</span>, color <span class="op">=</span> <span class="st">"label"</span>))</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="model-3-8020-split-and-look-back-4-lstm10" class="level3">
+<h3 class="anchored" data-anchor-id="model-3-8020-split-and-look-back-4-lstm10">Model 3: 80/20 Split and Look Back = 4, LSTM(10)</h3>
+<div id="cell-26" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change our look back from 3 to 4</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>look_back <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>trainX, trainY <span class="op">=</span> create_dataset_vars(train, look_back)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>testX, testY <span class="op">=</span> create_dataset_vars(test, look_back)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>trainX <span class="op">=</span> np.reshape(trainX, (trainX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>testX <span class="op">=</span> np.reshape(testX, (testX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-27" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the LSTM network</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Sequential()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>model.add(LSTM(<span class="dv">10</span>, input_shape<span class="op">=</span>(look_back, <span class="dv">1</span>)))  <span class="co"># Update the input_shape</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>model.add(Dense(<span class="dv">1</span>))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'mean_squared_error'</span>, optimizer<span class="op">=</span><span class="st">'adam'</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>model.fit(trainX, trainY, epochs<span class="op">=</span><span class="dv">10</span>, batch_size<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/10
+Epoch 1/10</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.12/site-packages/keras/src/layers/rnn/rnn.py:200: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>795/795 - 2s - 2ms/step - loss: 0.0090
+795/795 - 2s - 2ms/step - loss: 0.0090
+Epoch 2/10
+Epoch 2/10
+795/795 - 1s - 939us/step - loss: 0.0043
+795/795 - 1s - 939us/step - loss: 0.0043
+Epoch 3/10
+Epoch 3/10
+795/795 - 1s - 975us/step - loss: 0.0041
+795/795 - 1s - 975us/step - loss: 0.0041
+Epoch 4/10
+Epoch 4/10
+795/795 - 1s - 1ms/step - loss: 0.0039
+795/795 - 1s - 1ms/step - loss: 0.0039
+Epoch 5/10
+Epoch 5/10
+795/795 - 1s - 941us/step - loss: 0.0039
+795/795 - 1s - 941us/step - loss: 0.0039
+Epoch 6/10
+Epoch 6/10
+795/795 - 1s - 952us/step - loss: 0.0039
+795/795 - 1s - 952us/step - loss: 0.0039
+Epoch 7/10
+Epoch 7/10
+795/795 - 1s - 939us/step - loss: 0.0038
+795/795 - 1s - 939us/step - loss: 0.0038
+Epoch 8/10
+Epoch 8/10
+795/795 - 1s - 926us/step - loss: 0.0038
+795/795 - 1s - 926us/step - loss: 0.0038
+Epoch 9/10
+Epoch 9/10
+795/795 - 1s - 933us/step - loss: 0.0038
+795/795 - 1s - 933us/step - loss: 0.0038
+Epoch 10/10
+Epoch 10/10
+795/795 - 1s - 1ms/step - loss: 0.0037
+795/795 - 1s - 1ms/step - loss: 0.0037</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;keras.src.callbacks.history.History at 0x306acd4f0&gt;</code></pre>
+</div>
+</div>
+<div id="cell-28" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> model.predict(trainX)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> model.predict(testX)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># invert predictions</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> scaler.inverse_transform(trainPredict)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>trainY <span class="op">=</span> scaler.inverse_transform([trainY])</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> scaler.inverse_transform(testPredict)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>testY <span class="op">=</span> scaler.inverse_transform([testY])</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate root mean squared error</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>trainScore <span class="op">=</span> np.sqrt(mean_squared_error(trainY[<span class="dv">0</span>], trainPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Train Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (trainScore))</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>testScore <span class="op">=</span> np.sqrt(mean_squared_error(testY[<span class="dv">0</span>], testPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Test Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (testScore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 1/25 ━━━━━━━━━━━━━━━━━━━━ 2s 108ms/step 1/25 ━━━━━━━━━━━━━━━━━━━━ 2s 108ms/step25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step  25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step
+25/25 ━━━━━━━━━━━━━━━━━━━━ 0s 9ms/step
+1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step1/7 ━━━━━━━━━━━━━━━━━━━━ 0s 16ms/step7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+7/7 ━━━━━━━━━━━━━━━━━━━━ 0s 3ms/step 
+Train Score: 23564.04 RMSE
+Test Score: 30724.54 RMSE
+Train Score: 23564.04 RMSE
+Test Score: 30724.54 RMSE</code></pre>
+</div>
+</div>
+<div id="cell-29" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># shift train predictions for plotting</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>trainPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#trainPredictPlot[:, :] = np.nan</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>trainPredictPlot[look_back:<span class="bu">len</span>(trainPredict)<span class="op">+</span>look_back, :] <span class="op">=</span> trainPredict</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># shift test predictions for plotting</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>testPredictPlot <span class="op">=</span> np.empty_like(data2)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">#testPredictPlot[:, :] = np.nan</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>testPredictPlot[:, :] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>testPredictPlot[<span class="bu">len</span>(trainPredict)<span class="op">+</span>(look_back<span class="op">*</span><span class="dv">2</span>)<span class="op">+</span><span class="dv">1</span>:<span class="bu">len</span>(data2)<span class="op">-</span><span class="dv">1</span>, :] <span class="op">=</span> testPredict</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># plot baseline and predictions</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>plt.plot(scaler.inverse_transform(data2))</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>plt.plot(trainPredictPlot)</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>plt.plot(testPredictPlot)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-30" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(scaler.inverse_transform(data2).flatten(), trainPredictPlot.flatten())</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(finalma, testPredictPlot.flatten())</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append([<span class="st">"Original"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot), [<span class="st">"Train"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append(finallabels, [<span class="st">"Test"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(<span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)), <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(finaltime, <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> </span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'timeindex'</span>: finaltime,</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'volume'</span>: finalma,</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'label'</span>: finallabels}</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>(ggplot(results, aes(<span class="st">"finaltime"</span>, <span class="st">"volume"</span>, color <span class="op">=</span> <span class="st">"label"</span>))</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="model-4-7525-split-and-look-back-2-lstm4" class="level3">
+<h3 class="anchored" data-anchor-id="model-4-7525-split-and-look-back-2-lstm4">Model 4: 75/25 Split and Look Back = 2, LSTM(4)</h3>
+<div id="cell-32" class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>train_size <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(data2) <span class="op">*</span> <span class="fl">0.75</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>test_size <span class="op">=</span> <span class="bu">len</span>(data2) <span class="op">-</span> train_size</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> data2[<span class="dv">0</span>:train_size], data2[train_size:<span class="bu">len</span>(data2)]</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(train), <span class="bu">len</span>(test))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>750 250
+750 250</code></pre>
+</div>
+</div>
+<div id="cell-33" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>look_back <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>trainX, trainY <span class="op">=</span> create_dataset_vars(train, look_back)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>testX, testY <span class="op">=</span> create_dataset_vars(test, look_back)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>trainX <span class="op">=</span> np.reshape(trainX, (trainX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>testX <span class="op">=</span> np.reshape(testX, (testX.shape[<span class="dv">0</span>], look_back, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-34" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the LSTM network</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Sequential()</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>model.add(LSTM(<span class="dv">4</span>, input_shape<span class="op">=</span>(look_back, <span class="dv">1</span>))) </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>model.add(Dense(<span class="dv">1</span>))</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'mean_squared_error'</span>, optimizer<span class="op">=</span><span class="st">'adam'</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>model.fit(trainX, trainY, epochs<span class="op">=</span><span class="dv">10</span>, batch_size<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/10
+Epoch 1/10</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/anaconda3/lib/python3.12/site-packages/keras/src/layers/rnn/rnn.py:200: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>747/747 - 1s - 2ms/step - loss: 0.0083
+747/747 - 1s - 2ms/step - loss: 0.0083
+Epoch 2/10
+Epoch 2/10
+747/747 - 1s - 839us/step - loss: 0.0059
+747/747 - 1s - 839us/step - loss: 0.0059
+Epoch 3/10
+Epoch 3/10
+747/747 - 1s - 752us/step - loss: 0.0049
+747/747 - 1s - 752us/step - loss: 0.0049
+Epoch 4/10
+Epoch 4/10
+747/747 - 1s - 784us/step - loss: 0.0044
+747/747 - 1s - 784us/step - loss: 0.0044
+Epoch 5/10
+Epoch 5/10
+747/747 - 1s - 1ms/step - loss: 0.0042
+747/747 - 1s - 1ms/step - loss: 0.0042
+Epoch 6/10
+Epoch 6/10
+747/747 - 1s - 856us/step - loss: 0.0041
+747/747 - 1s - 856us/step - loss: 0.0041
+Epoch 7/10
+Epoch 7/10
+747/747 - 1s - 756us/step - loss: 0.0040
+747/747 - 1s - 756us/step - loss: 0.0040
+Epoch 8/10
+Epoch 8/10
+747/747 - 1s - 782us/step - loss: 0.0041
+747/747 - 1s - 782us/step - loss: 0.0041
+Epoch 9/10
+Epoch 9/10
+747/747 - 1s - 781us/step - loss: 0.0040
+747/747 - 1s - 781us/step - loss: 0.0040
+Epoch 10/10
+Epoch 10/10
+747/747 - 1s - 758us/step - loss: 0.0040
+747/747 - 1s - 758us/step - loss: 0.0040</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;keras.src.callbacks.history.History at 0x32340acc0&gt;</code></pre>
+</div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> model.predict(trainX)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> model.predict(testX)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># invert predictions</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>trainPredict <span class="op">=</span> scaler.inverse_transform(trainPredict)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>trainY <span class="op">=</span> scaler.inverse_transform([trainY])</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>testPredict <span class="op">=</span> scaler.inverse_transform(testPredict)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>testY <span class="op">=</span> scaler.inverse_transform([testY])</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate root mean squared error</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>trainScore <span class="op">=</span> np.sqrt(mean_squared_error(trainY[<span class="dv">0</span>], trainPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Train Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (trainScore))</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>testScore <span class="op">=</span> np.sqrt(mean_squared_error(testY[<span class="dv">0</span>], testPredict[:,<span class="dv">0</span>]))</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Test Score: </span><span class="sc">%.2f</span><span class="st"> RMSE'</span> <span class="op">%</span> (testScore))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 1/24 ━━━━━━━━━━━━━━━━━━━━ 2s 118ms/step 1/24 ━━━━━━━━━━━━━━━━━━━━ 2s 118ms/step24/24 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step  24/24 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step  24/24 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step
+24/24 ━━━━━━━━━━━━━━━━━━━━ 0s 7ms/step
+1/8 ━━━━━━━━━━━━━━━━━━━━ 0s 19ms/step1/8 ━━━━━━━━━━━━━━━━━━━━ 0s 19ms/step8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step 
+8/8 ━━━━━━━━━━━━━━━━━━━━ 0s 4ms/step 
+Train Score: 24594.11 RMSE
+Test Score: 28229.71 RMSE
+Train Score: 24594.11 RMSE
+Test Score: 28229.71 RMSE</code></pre>
+</div>
+</div>
+<div id="cell-36" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(scaler.inverse_transform(data2).flatten(), trainPredictPlot.flatten())</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>finalma <span class="op">=</span> np.append(finalma, testPredictPlot.flatten())</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append([<span class="st">"Original"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot), [<span class="st">"Train"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>finallabels <span class="op">=</span> np.append(finallabels, [<span class="st">"Test"</span>]<span class="op">*</span><span class="bu">len</span>(trainPredictPlot))</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(<span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)), <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>finaltime <span class="op">=</span> np.append(finaltime, <span class="bu">range</span>(<span class="bu">len</span>(trainPredictPlot)))</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> </span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'timeindex'</span>: finaltime,</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'volume'</span>: finalma,</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'label'</span>: finallabels}</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>(ggplot(results, aes(<span class="st">"finaltime"</span>, <span class="st">"volume"</span>, color <span class="op">=</span> <span class="st">"label"</span>))</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> geom_line())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Lab-5_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Out of the 3 models with an 80/20 split, model 1 performed the best which has the lowest RMSE of 29375.80. This can be seen in the graphs because model 1’s predictions are closest to the actual values. Then I increases the test training split to 75/25 and got the lowest RMSE of 28229.71.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
